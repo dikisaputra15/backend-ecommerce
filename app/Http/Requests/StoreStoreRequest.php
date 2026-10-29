@@ -23,7 +23,22 @@ class StoreStoreRequest extends FormRequest
             'address_id' => 'required',
             'city' => 'required|string',
             'address' => 'required|string',
-            'postal_code' => 'required|string'
+            'postal_code' => 'required|string',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'user_id' => 'User',
+            'name' => 'Nama Toko',
+            'logo' => 'Logo Toko',
+            'about' => 'Tentang Toko',
+            'phone' => 'Nomor Telepon',
+            'address_id' => 'Alamat Toko',
+            'city' => 'Kota',
+            'address' => 'Alamat',
+            'postal_code' => 'Kode Pos',
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Interfaces;
 
-
 interface StoreRepositoryInterface
 {
     public function getAll(
@@ -24,5 +23,19 @@ interface StoreRepositoryInterface
 
     public function create(
         array $data
+    );
+
+    public function updateVerifiedStatus(
+        string $id,
+        bool $isVerified
+    );
+
+    public function update(
+        string $id,
+        array $data
+    );
+
+    public function delete(
+        string $id
     );
 }

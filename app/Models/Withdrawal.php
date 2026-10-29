@@ -18,8 +18,8 @@ class Withdrawal extends Model
         'status',
     ];
 
-    public function storeBallance()
+    public function storeBalance()
     {
-        return $this->belongsTo(StoreBallance::class);
+        return $this->belongsTo(StoreBalance::class);
     }
 }
