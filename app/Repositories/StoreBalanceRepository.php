@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\StoreBalanceRepositoryInterface;
 use App\Models\StoreBalance;
+use Illuminate\Support\Facades\DB;
 
 class StoreBalanceRepository implements StoreBalanceRepositoryInterface
 {
@@ -81,7 +82,7 @@ class StoreBalanceRepository implements StoreBalanceRepositoryInterface
             $storeBalance = StoreBalance::find($id);
 
             if (bccomp($storeBalance->balance, $amount, 2) < 0) {
-                throw new Exception("Saldo tidak mencukupi");
+                throw new Exception('Saldo tidak mencukupi');
             }
 
             $storeBalance->balance = bcsub($storeBalance->balance, $amount, 2);

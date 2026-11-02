@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Helpers\ResponseHelper;
+use App\Http\Requests\WithdrawalApproveRequest;
+use App\Http\Requests\WithdrawalStoreRequest;
 use App\Http\Resources\PaginateResource;
-use App\Interfaces\WithdrawalRepositoryInterface;
 use App\Http\Resources\WithdrawalResource;
+use App\Interfaces\WithdrawalRepositoryInterface;
+use Illuminate\Http\Request;
 
 class WithdrawalController extends Controller
 {
     private WithdrawalRepositoryInterface $withdrawalRepository;
+
     /**
      * Display a listing of the resource.
      */
-
     public function __construct(WithdrawalRepositoryInterface $withdrawalRepository)
     {
         $this->withdrawalRepository = $withdrawalRepository;
@@ -39,7 +41,7 @@ class WithdrawalController extends Controller
     {
         $request = $request->validate([
             'search' => 'nullable|string',
-            'row_per_page' => 'required|integer'
+            'row_per_page' => 'required|integer',
         ]);
 
         try {
@@ -57,9 +59,17 @@ class WithdrawalController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(WithdrawalStoreRequest $request)
     {
-        //
+        $request = $request->validated();
+
+        try {
+            $withdrawal = $this->withdrawalRepository->create($request);
+
+            return ResponseHelper::jsonResponse(true, 'Withdrawal Berhasil Ditambahkan', new WithdrawalResource($withdrawal), 201);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**
@@ -67,22 +77,39 @@ class WithdrawalController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $withdrawal = $this->withdrawalRepository->getById($id);
+
+            if (! $withdrawal) {
+                return ResponseHelper::jsonResponse(true, 'Data Withdrawal Tidak Ditemukan', null, 404);
+            }
+
+            return ResponseHelper::jsonResponse(true, 'Data Withdrawal Berhasil Diambil', new WithdrawalResource($withdrawal), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function approve(WithdrawalApproveRequest $request, string $id)
     {
-        //
+        $request = $request->validated();
+
+        try {
+            $withdrawal = $this->withdrawalRepository->getById($id);
+
+            if (! $withdrawal) {
+                return ResponseHelper::jsonResponse(false, 'Data Withdrawal Tidak Ditemukan', null, 404);
+            }
+
+            $withdrawal = $this->withdrawalRepository->approve(
+                $id,
+                $request['proof']
+            );
+
+            return ResponseHelper::jsonResponse(true, 'Withdrawal Berhasil Disetujui', new WithdrawalResource($withdrawal), 200);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

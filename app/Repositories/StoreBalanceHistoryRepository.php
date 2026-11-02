@@ -5,10 +5,11 @@ namespace App\Repositories;
 use App\Interfaces\StoreBalanceHistoryRepositoryInterface;
 use App\Models\StoreBalanceHistory;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class StoreBalanceHistoryRepository implements StoreBalanceHistoryRepositoryInterface
 {
-     public function getAll(
+    public function getAll(
         ?string $search,
         ?int $limit,
         bool $execute
@@ -69,14 +70,14 @@ class StoreBalanceHistoryRepository implements StoreBalanceHistoryRepositoryInte
             DB::commit();
 
             return $storeBalanceHistory;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             throw new Exception($e->getMessage());
         }
     }
 
-     public function update(
+    public function update(
         string $id,
         array $data
     ) {
@@ -94,7 +95,7 @@ class StoreBalanceHistoryRepository implements StoreBalanceHistoryRepositoryInte
             DB::commit();
 
             return $storeBalanceHistory;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             throw new Exception($e->getMessage());
